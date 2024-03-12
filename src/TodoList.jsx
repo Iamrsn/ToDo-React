@@ -1,16 +1,49 @@
 import { v4 as uuidv4 } from 'uuid';
 import { useState } from "react";
 export default function TodoList(){
-    let[todos,setTodos]=useState([{task:"sample-task",id:uuidv4()}]);
+    let[todos,setTodos]=useState([{task:"sample-task",id:uuidv4()}]);//use of they key at that place..
     let[newtodos,setnewtodos]=useState("")
 
     function addnewtask(){
-        setTodos([...todos,{task:newtodos,id:uuidv4()}])
+        setTodos((prevtodos)=>{
+            return  [...prevtodos,{task:newtodos,id:uuidv4()}]
+        });
         setnewtodos("")
     }
 
     function updatetodovalue(event){
         setnewtodos(event.target.value);
+    }
+
+    function deletetodo(id){
+        setTodos(()=>todos.filter((prevtodos)=>prevtodos.id!=id));
+    }
+
+    let uppercaseall=()=>{
+        setTodos((todos)=>(
+            todos.map((todos)=>{
+                return {
+                    ...todos,
+                    task:todos.task.toUpperCase(),
+                };
+            })
+        ));
+    };
+
+    let uppercaseone=(id)=>{
+        setTodos((todos)=>(
+            todos.map((todos)=>{
+                if(todos.id==id){
+                    return {
+                        ...todos,
+                        task:todos.task.toUpperCase(),
+                    };
+                }
+                else{
+                    return todos;
+                } 
+            })
+        ));
     }
     return(
         <div>
@@ -23,9 +56,17 @@ export default function TodoList(){
             <ul>
                     {todos.map((todo)=>(
                         // eslint-disable-next-line react/jsx-key
-                        <li key={todo.id}>{todo.task}</li>
+                        <li key={todo.id}>
+                            <span>{todo.task}</span>
+                            &nbsp;&nbsp;&nbsp;
+                            <button onClick={()=>deletetodo(todo.id)}>Delete</button>
+                            <button onClick={()=>uppercaseone(todo.id)}>uppercaseone</button>
+                        </li> 
                     ))}
             </ul>
+            <br />
+            <br />
+            <button onClick={uppercaseall}>uppercase </button>
         </div>
     );
 }
